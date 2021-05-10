@@ -6,8 +6,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import ms.producto.dao.MaterialDTO;
 import ms.producto.dao.MaterialRepository;
 import ms.producto.service.MaterialService;
 import ms.producto.service.PedidoService;
@@ -32,7 +35,7 @@ public class MaterialServiceImpl implements MaterialService{
 	}
 
 	@Override
-	public Optional<Material> findByNombre(Optional<String> nombre) {
+	public Optional<Material> findByNombre(String nombre) {
 		Optional<Material> material = this.materialRepo.findByNombre(nombre);
 
 		if(material.isPresent())
@@ -42,20 +45,27 @@ public class MaterialServiceImpl implements MaterialService{
 	}
 
 	@Override
-	public Optional<Material> findByPrecio(Optional<Double> precio) {
-		Optional<Material> material = this.materialRepo.findByPrecio(precio);
+	public List<MaterialDTO> findByPrecioLessThanEqual(Double precio) {
 
-		if(material.isPresent())
-			return material;
+		Page<Material> pagina = (Page<Material>) this.materialRepo.findByPrecioLessThanEqual(precio, PageRequest.of(1,20));
+		
+		if(pagina.hasContent())
+		return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio()))
+				.collect(Collectors.toList());
+		return null;
 
-		return Optional.empty();
 	}
 
 	@Override
-	public List<Material> findAll() {
-		return this.materialRepo.findAll();
-
+	public List<MaterialDTO> findByStockActualBetween(Integer min, Integer max) {
+		
+		Page<Material> pagina = (Page<Material>) this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(1,20));
+		if(pagina.hasContent())
+		return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
+				.collect(Collectors.toList());
+		return null;
 	}
+
 
 	@Override
 	public Material save(Material nuevo) {
@@ -96,4 +106,12 @@ public class MaterialServiceImpl implements MaterialService{
 			throw new RuntimeException("Material no encontrado");
 
 	}
+
+	@Override
+	public List<Material> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

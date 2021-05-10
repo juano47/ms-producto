@@ -3,6 +3,9 @@ package ms.producto.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+
+import ms.producto.dao.MaterialDTO;
 import ms.producto.domain.Material;
 
 public interface MaterialService {
@@ -17,8 +20,10 @@ public interface MaterialService {
 
 	void delete(Integer id);
 
-	Optional<Material> findByNombre(Optional<String> nombre);
+	Optional<Material> findByNombre(String nombre);
+	
+	List<MaterialDTO> findByStockActualBetween(Integer min, Integer max);
 
-	Optional<Material> findByPrecio(Optional<Double> precio);
+	List<MaterialDTO> findByPrecioLessThanEqual(Double precio);
 
 }
