@@ -4,8 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import ms.producto.dao.MaterialDTO;
 import ms.producto.domain.Material;
+import ms.producto.dto.MaterialDTO;
 import ms.producto.service.MaterialService;
 
 import org.springframework.beans.factory.annotation.Autowired;

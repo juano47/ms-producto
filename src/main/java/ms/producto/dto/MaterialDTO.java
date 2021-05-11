@@ -1,6 +1,14 @@
-package ms.producto.dao;
+package ms.producto.dto;
 
-public class MaterialDTO {
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+import ms.producto.domain.Material;
+
+@Getter
+@Setter
+public class MaterialDTO implements Serializable{
 
 	public MaterialDTO(Integer id, String descripcion, Double precio) {
 		// TODO Auto-generated constructor stub

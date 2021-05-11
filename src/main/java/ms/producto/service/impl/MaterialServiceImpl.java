@@ -10,11 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import ms.producto.dao.MaterialDTO;
 import ms.producto.dao.MaterialRepository;
 import ms.producto.service.MaterialService;
 import ms.producto.service.PedidoService;
 import ms.producto.domain.Material;
+import ms.producto.dto.MaterialDTO;
 
 @Service
 public class MaterialServiceImpl implements MaterialService{

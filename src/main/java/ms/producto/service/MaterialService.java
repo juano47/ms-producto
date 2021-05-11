@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 
-import ms.producto.dao.MaterialDTO;
 import ms.producto.domain.Material;
+import ms.producto.dto.MaterialDTO;
 
 public interface MaterialService {
 
