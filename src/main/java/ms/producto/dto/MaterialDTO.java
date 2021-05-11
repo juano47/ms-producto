@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import lombok.Getter;
 import lombok.Setter;
-import ms.producto.domain.Material;
 
 @Getter
 @Setter

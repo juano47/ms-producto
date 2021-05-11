@@ -34,27 +34,39 @@ public class ProductoController {
 
 	@GetMapping(params = "precio")
 	@ApiOperation(value = "Busca un material por precio")
-	public ResponseEntity<List<MaterialDTO>> materialPorPrecio(@RequestParam Optional<Double> precio){
+	public ResponseEntity<?> materialPorPrecio(@RequestParam Optional<Double> precio){
 
 		List<MaterialDTO> materiales = null;
 
 		if(precio.isPresent()) {
 			materiales = materialService.findByPrecioLessThanEqual(precio.get());
 		}
-
+		else
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Debe especificar un precio");
+		
 		return ResponseEntity.ok(materiales);
 	}
 	
 	@GetMapping(params = {"minStock", "maxStock", "page"})
 	@ApiOperation(value = "Busca un material por rango de stock")
-	public ResponseEntity<List<MaterialDTO>> materialPorStockEntre(@RequestParam Optional<Integer> minStock, Optional<Integer> maxStock){
+	public ResponseEntity<?> materialPorStockEntre(@RequestParam Optional<Integer> minStock, Optional<Integer> maxStock){
 
 		List<MaterialDTO> materiales = null;
 
-		if(minStock.isPresent() || maxStock.isPresent()) {
+		if(minStock.isPresent() && maxStock.isPresent()) {
 			materiales = materialService.findByStockActualBetween(minStock.get(), maxStock.get());
 		}
-
+		else if(minStock.isPresent()) {
+			materiales = materialService.findByStockActualBetween(minStock.get(), null);
+		}
+		else if(maxStock.isPresent()) {
+			materiales = materialService.findByStockActualBetween(null, maxStock.get());
+		}
+		else
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Debe especificar un rango de stock");
+		
 		return ResponseEntity.ok(materiales);
 	}
 
@@ -105,11 +117,11 @@ public class ProductoController {
 		try {
 			materialService.update(id, nuevo);
 		}
-		catch (DataIntegrityViolationException e2) {			
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMostSpecificCause().toString());
+		catch (DataIntegrityViolationException e1) {			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
 		}
-		catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		catch(Exception e2) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e2.getMessage());
 
 		} 
 		return ResponseEntity.ok(nuevo);

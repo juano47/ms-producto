@@ -47,22 +47,31 @@ public class MaterialServiceImpl implements MaterialService{
 	@Override
 	public List<MaterialDTO> findByPrecioLessThanEqual(Double precio) {
 
-		Page<Material> pagina = (Page<Material>) this.materialRepo.findByPrecioLessThanEqual(precio, PageRequest.of(1,20));
-		
+		Page<Material> pagina = this.materialRepo.findByPrecioLessThanEqual(precio, PageRequest.of(1,20));
+
 		if(pagina.hasContent())
-		return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio()))
-				.collect(Collectors.toList());
+			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio()))
+					.collect(Collectors.toList());
 		return null;
 
 	}
 
 	@Override
 	public List<MaterialDTO> findByStockActualBetween(Integer min, Integer max) {
+
+		Page<Material> pagina = null;
 		
-		Page<Material> pagina = (Page<Material>) this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(1,20));
+		if(min != null & max != null)
+			pagina = this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(1,20));
+		else if(min != null) {
+			pagina = this.materialRepo.findByStockActualGreaterThanEqual(min, PageRequest.of(1,20));
+		}
+		else
+			pagina = this.materialRepo.findByStockActualLessThanEqual(max, PageRequest.of(1,20));
+		
 		if(pagina.hasContent())
-		return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
-				.collect(Collectors.toList());
+			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
+					.collect(Collectors.toList());
 		return null;
 	}
 
