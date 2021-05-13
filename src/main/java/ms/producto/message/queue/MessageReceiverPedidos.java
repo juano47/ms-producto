@@ -12,7 +12,7 @@ import ms.producto.domain.DetallePedido;
 @Component
 public class MessageReceiverPedidos {
 	
-	@RabbitListener(queues = "${rabbitmq.queue.pedidos}")
+	@RabbitListener(queues = "${rabbitmq.queue.pedidos}")//"queue-pedidos"
 	public void processMessage(DetallePedido detallesPedidos) {
 	log.warn("LLEGO MENSAJE {}", detallesPedidos);
 	}
