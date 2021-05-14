@@ -21,5 +21,6 @@ public class Unidad {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_unidad")
 	private Integer id;
+	@Column(nullable = false)
 	private String descripcion;
 }

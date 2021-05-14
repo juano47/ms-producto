@@ -3,8 +3,6 @@ package ms.producto.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.PageRequest;
-
 import ms.producto.domain.Material;
 import ms.producto.dto.MaterialDTO;
 
@@ -24,6 +22,7 @@ public interface MaterialService {
 	
 	List<MaterialDTO> findByStockActualBetween(Integer min, Integer max);
 
-	List<MaterialDTO> findByPrecioLessThanEqual(Double precio);
+	List<MaterialDTO> findByPrecioBetween(Double double1, Double double2);
+
 
 }

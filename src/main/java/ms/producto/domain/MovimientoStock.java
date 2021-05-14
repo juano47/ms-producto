@@ -1,6 +1,6 @@
 package ms.producto.domain;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,5 +35,5 @@ public class MovimientoStock {
 	private Material material;
 	private Integer cantidadEntrada;
 	private Integer cantidadSalida;
-	private Instant fecha;
+	private LocalDate fecha;
 }

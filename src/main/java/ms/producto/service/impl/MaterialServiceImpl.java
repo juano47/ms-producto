@@ -1,6 +1,5 @@
 package ms.producto.service.impl;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import ms.producto.dao.MaterialRepository;
 import ms.producto.service.MaterialService;
-import ms.producto.service.PedidoService;
 import ms.producto.domain.Material;
 import ms.producto.dto.MaterialDTO;
 
@@ -22,8 +20,6 @@ public class MaterialServiceImpl implements MaterialService{
 	@Autowired
 	MaterialRepository materialRepo;
 
-	@Autowired
-	PedidoService pedidoService;
 
 	@Override
 	public Optional<Material> buscarPorId(Integer id) {
@@ -45,15 +41,22 @@ public class MaterialServiceImpl implements MaterialService{
 	}
 
 	@Override
-	public List<MaterialDTO> findByPrecioLessThanEqual(Double precio) {
+	public List<MaterialDTO> findByPrecioBetween(Double min, Double max) {
 
-		Page<Material> pagina = this.materialRepo.findByPrecioLessThanEqual(precio, PageRequest.of(1,20));
-
+		Page<Material> pagina = null;
+		
+		if(min != null & max != null)
+			pagina = this.materialRepo.findByPrecioBetween(min, max, PageRequest.of(0,20));
+		else if(min != null) {
+			pagina = this.materialRepo.findByPrecioGreaterThanEqual(min, PageRequest.of(0,20));
+		}
+		else
+			pagina = this.materialRepo.findByPrecioLessThanEqual(max, PageRequest.of(0,20));
+		
 		if(pagina.hasContent())
-			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio()))
+			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
 					.collect(Collectors.toList());
 		return null;
-
 	}
 
 	@Override
@@ -62,12 +65,12 @@ public class MaterialServiceImpl implements MaterialService{
 		Page<Material> pagina = null;
 		
 		if(min != null & max != null)
-			pagina = this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(1,20));
+			pagina = this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(0,20));
 		else if(min != null) {
-			pagina = this.materialRepo.findByStockActualGreaterThanEqual(min, PageRequest.of(1,20));
+			pagina = this.materialRepo.findByStockActualGreaterThanEqual(min, PageRequest.of(0,20));
 		}
 		else
-			pagina = this.materialRepo.findByStockActualLessThanEqual(max, PageRequest.of(1,20));
+			pagina = this.materialRepo.findByStockActualLessThanEqual(max, PageRequest.of(0,20));
 		
 		if(pagina.hasContent())
 			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
@@ -118,8 +121,7 @@ public class MaterialServiceImpl implements MaterialService{
 
 	@Override
 	public List<Material> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.materialRepo.findAll();
 	}
 
 

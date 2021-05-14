@@ -28,30 +28,37 @@ public class ProductoController {
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un material por id")
 	public ResponseEntity<Material> materialPorId(@PathVariable Integer id){
+		System.out.println("id");
 		Optional<Material> material = materialService.buscarPorId(id);
 		return ResponseEntity.of(material);
 	}
 
-	@GetMapping(params = "precio")
-	@ApiOperation(value = "Busca un material por precio")
-	public ResponseEntity<?> materialPorPrecio(@RequestParam Optional<Double> precio){
-
+	@GetMapping(params = {"minPrecio", "maxPrecio"})
+	@ApiOperation(value = "Busca un material por rango de precio")
+	public ResponseEntity<?> materialPorPrecioEntre(@RequestParam Optional<Double> minPrecio, Optional<Double> maxPrecio){
+		System.out.println("precio");
 		List<MaterialDTO> materiales = null;
 
-		if(precio.isPresent()) {
-			materiales = materialService.findByPrecioLessThanEqual(precio.get());
+		if(minPrecio.isPresent() && maxPrecio.isPresent()) {
+			materiales = materialService.findByPrecioBetween(minPrecio.get(), maxPrecio.get());
+		}
+		else if(minPrecio.isPresent()) {
+			materiales = materialService.findByPrecioBetween(minPrecio.get(), null);
+		}
+		else if(maxPrecio.isPresent()) {
+			materiales = materialService.findByPrecioBetween(null, maxPrecio.get());
 		}
 		else
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Debe especificar un precio");
-		
+					.body("Debe especificar un rango de precio");
+
 		return ResponseEntity.ok(materiales);
 	}
-	
-	@GetMapping(params = {"minStock", "maxStock", "page"})
+
+	@GetMapping(params = {"minStock", "maxStock"})
 	@ApiOperation(value = "Busca un material por rango de stock")
 	public ResponseEntity<?> materialPorStockEntre(@RequestParam Optional<Integer> minStock, Optional<Integer> maxStock){
-
+		System.out.println("stock");
 		List<MaterialDTO> materiales = null;
 
 		if(minStock.isPresent() && maxStock.isPresent()) {
@@ -66,14 +73,14 @@ public class ProductoController {
 		else
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Debe especificar un rango de stock");
-		
+
 		return ResponseEntity.ok(materiales);
 	}
 
 	@GetMapping(params = "nombre")
 	@ApiOperation(value = "Busca un material por nombre")
 	public ResponseEntity<?> materialPorNombre(@RequestParam Optional<String> nombre){
-
+		System.out.println("nombre");
 		if(nombre.isPresent()) {
 			Optional<Material> material = materialService.findByNombre(nombre.get());
 			return ResponseEntity.of(material);
@@ -86,7 +93,7 @@ public class ProductoController {
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo material")
 	public ResponseEntity<String> crear(@RequestBody Material material) {
-
+		
 		if(material.getUnidad() == null || material.getUnidad().getDescripcion() == null){
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Debe especificar la unidad del material");
@@ -97,9 +104,13 @@ public class ProductoController {
 		}
 		try {
 			material = materialService.save(material);
-		} catch (RuntimeException e1) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMessage());
+		}		catch (DataIntegrityViolationException e1) {			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e1.getMostSpecificCause().toString());
 		}
+		catch(Exception e2) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e2.getMessage());
+
+		} 
 
 		return ResponseEntity.ok("Material Creado");
 	}
@@ -144,6 +155,14 @@ public class ProductoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
 		} 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok("Material "+id+" borrado con éxito");
+	}
+	
+	@GetMapping
+	@ApiOperation(value = "Retorna lista de materiales")
+	public ResponseEntity<List<Material>> todos(){
+		System.out.println("todos");
+		List<Material> materiales = materialService.findAll();
+		return ResponseEntity.ok(materiales);
 	}
 }

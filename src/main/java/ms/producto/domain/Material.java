@@ -1,6 +1,5 @@
 package ms.producto.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,12 +21,13 @@ public class Material {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_material")
 	private Integer id;
+	@Column(nullable = false)
 	private String nombre;
 	private String descripcion;
 	private Double precio;
 	private Integer stockActual;
 	private Integer stockMinimo;
     @ManyToOne
-    @JoinColumn(name = "id_unidad")
+    @JoinColumn(name = "id_unidad", nullable = false)
 	private Unidad unidad;
 }
