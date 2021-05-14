@@ -36,7 +36,6 @@ public class MessageReceiverPedidos {
 				material.setStockActual(material.getStockActual()-detalle.getCantidad());
 				materialService.update(material.getId(), material);
 			}
-			
 		});
 	}
 }
