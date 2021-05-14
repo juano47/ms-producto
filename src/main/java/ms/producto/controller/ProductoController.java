@@ -28,7 +28,7 @@ public class ProductoController {
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un material por id")
 	public ResponseEntity<Material> materialPorId(@PathVariable Integer id){
-		System.out.println("id");
+
 		Optional<Material> material = materialService.buscarPorId(id);
 		return ResponseEntity.of(material);
 	}
@@ -36,7 +36,7 @@ public class ProductoController {
 	@GetMapping(params = {"minPrecio", "maxPrecio"})
 	@ApiOperation(value = "Busca un material por rango de precio")
 	public ResponseEntity<?> materialPorPrecioEntre(@RequestParam Optional<Double> minPrecio, Optional<Double> maxPrecio){
-		System.out.println("precio");
+
 		List<MaterialDTO> materiales = null;
 
 		if(minPrecio.isPresent() && maxPrecio.isPresent()) {
@@ -58,7 +58,7 @@ public class ProductoController {
 	@GetMapping(params = {"minStock", "maxStock"})
 	@ApiOperation(value = "Busca un material por rango de stock")
 	public ResponseEntity<?> materialPorStockEntre(@RequestParam Optional<Integer> minStock, Optional<Integer> maxStock){
-		System.out.println("stock");
+
 		List<MaterialDTO> materiales = null;
 
 		if(minStock.isPresent() && maxStock.isPresent()) {
@@ -80,7 +80,7 @@ public class ProductoController {
 	@GetMapping(params = "nombre")
 	@ApiOperation(value = "Busca un material por nombre")
 	public ResponseEntity<?> materialPorNombre(@RequestParam Optional<String> nombre){
-		System.out.println("nombre");
+
 		if(nombre.isPresent()) {
 			Optional<Material> material = materialService.findByNombre(nombre.get());
 			return ResponseEntity.of(material);
@@ -161,7 +161,6 @@ public class ProductoController {
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de materiales")
 	public ResponseEntity<List<Material>> todos(){
-		System.out.println("todos");
 		List<Material> materiales = materialService.findAll();
 		return ResponseEntity.ok(materiales);
 	}
