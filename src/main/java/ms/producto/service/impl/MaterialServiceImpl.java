@@ -10,8 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import ms.producto.dao.MaterialRepository;
+import ms.producto.dao.UnidadRepository;
 import ms.producto.service.MaterialService;
 import ms.producto.domain.Material;
+import ms.producto.domain.Unidad;
 import ms.producto.dto.MaterialDTO;
 
 @Service
@@ -20,6 +22,8 @@ public class MaterialServiceImpl implements MaterialService{
 	@Autowired
 	MaterialRepository materialRepo;
 
+	@Autowired
+	UnidadRepository unidadRepo;
 
 	@Override
 	public Optional<Material> buscarPorId(Integer id) {
@@ -44,7 +48,7 @@ public class MaterialServiceImpl implements MaterialService{
 	public List<MaterialDTO> findByPrecioBetween(Double min, Double max) {
 
 		Page<Material> pagina = null;
-		
+
 		if(min != null & max != null)
 			pagina = this.materialRepo.findByPrecioBetween(min, max, PageRequest.of(0,20));
 		else if(min != null) {
@@ -52,7 +56,7 @@ public class MaterialServiceImpl implements MaterialService{
 		}
 		else
 			pagina = this.materialRepo.findByPrecioLessThanEqual(max, PageRequest.of(0,20));
-		
+
 		if(pagina.hasContent())
 			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
 					.collect(Collectors.toList());
@@ -63,7 +67,7 @@ public class MaterialServiceImpl implements MaterialService{
 	public List<MaterialDTO> findByStockActualBetween(Integer min, Integer max) {
 
 		Page<Material> pagina = null;
-		
+
 		if(min != null & max != null)
 			pagina = this.materialRepo.findByStockActualBetween(min, max, PageRequest.of(0,20));
 		else if(min != null) {
@@ -71,7 +75,7 @@ public class MaterialServiceImpl implements MaterialService{
 		}
 		else
 			pagina = this.materialRepo.findByStockActualLessThanEqual(max, PageRequest.of(0,20));
-		
+
 		if(pagina.hasContent())
 			return pagina.stream().map(m -> new MaterialDTO(m.getId(),m.getDescripcion(),m.getPrecio(), m.getStockActual()))
 					.collect(Collectors.toList());
@@ -82,16 +86,23 @@ public class MaterialServiceImpl implements MaterialService{
 	@Override
 	public Material save(Material nuevo) {
 
-		if(nuevo.getId() != null) {
-			Optional<Material> material = this.materialRepo.findById(nuevo.getId());
+		Optional<Unidad> unidadMaterial = this.unidadRepo.findById(nuevo.getUnidad().getId());
+		
+		if(unidadMaterial.isPresent() && unidadMaterial.get().getDescripcion().equals(nuevo.getUnidad().getDescripcion())){
 
-			if(material.isPresent()) 
-				return this.materialRepo.save(nuevo);
+			if(nuevo.getId() != null) {
+				Optional<Material> material = this.materialRepo.findById(nuevo.getId());
+
+				if(material.isPresent())
+					return this.materialRepo.save(nuevo);
+				else
+					throw new RuntimeException("Material no encontrado");
+			}
 			else
-				throw new RuntimeException("Material no encontrado");
+				return this.materialRepo.save(nuevo);
 		}
 		else
-			return this.materialRepo.save(nuevo);
+			throw new RuntimeException("La unidad asignada al material no existe");
 	}
 
 	@Override
