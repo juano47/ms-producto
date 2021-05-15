@@ -33,7 +33,7 @@ class UnidadRepositoryTest {
 	
 	@Test
 	@Order(1)
-	@Sql({"/datosUnidad.sql"})
+	@Sql({"/data.sql"})
 	void testInsertarUnidadesConExito() {
 		List<Unidad> unidadesDisponibles = unidadRepo.findAll();
 		assertTrue(unidadesDisponibles.size() == 5);
