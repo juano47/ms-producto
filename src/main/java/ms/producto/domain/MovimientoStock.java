@@ -13,11 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name="PRD_MOVIMIENTO_STOCK", schema = "MS_PRD")
 public class MovimientoStock {
