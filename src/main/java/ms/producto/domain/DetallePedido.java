@@ -13,7 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="PED_DETALLE_PEDIDO", schema = "MS_PED")
+@Table(name="PRD_DETALLE_PEDIDO", schema = "MS_PRD")
+//Para evitar sobreescribir tabla principal, la tabla se crea en ms_prd y no contendrá datos
 public class DetallePedido {
 	@Id //No indico la strategy, es solo lectura
 	private Integer id;
