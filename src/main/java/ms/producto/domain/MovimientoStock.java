@@ -24,7 +24,7 @@ public class MovimientoStock {
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id_movimiento_stock")
 	private Integer id;
-	@OneToOne //Solo lectura
+	@OneToOne(cascade = CascadeType.ALL) //Solo lectura
 	@JoinColumn(name = "id_detalle_pedido")
 	private DetallePedido detallePedido;
 	@OneToOne

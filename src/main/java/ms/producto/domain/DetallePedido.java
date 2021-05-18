@@ -2,6 +2,8 @@ package ms.producto.domain;
 
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Table(name="PRD_DETALLE_PEDIDO", schema = "MS_PRD")
 //Para evitar sobreescribir tabla principal, la tabla se crea en ms_prd y no contendrá datos
 public class DetallePedido {
-	@Id //No indico la strategy, es solo lectura
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	@ManyToOne
 	@JoinColumn(name = "id_material")

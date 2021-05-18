@@ -42,7 +42,7 @@ public class MessageReceiverPedidos {
 	
 	@RabbitListener(queues = "${rabbitmq.queue.pedidos}")
 	public void processMessage(String message) throws JsonMappingException, JsonProcessingException {
-		log.info("Mensaje recibido desde cola peddidos ", message);
+		log.info("Mensaje recibido desde cola pedidos ", message);
 		ObjectMapper mapper = new ObjectMapper();
 		List<MessageQueuePedidos> messageList = mapper.readValue(message, new TypeReference<List<MessageQueuePedidos>>(){});
 		
@@ -54,7 +54,6 @@ public class MessageReceiverPedidos {
 				//actualizar stock del material
 				material.setStockActual(material.getStockActual()-detalle.getCantidad());
 				materialService.update(material.getId(), material);
-				
 				
 				//chequear stock minimo
 				if(material.getStockActual() < material.getStockMinimo()) {
