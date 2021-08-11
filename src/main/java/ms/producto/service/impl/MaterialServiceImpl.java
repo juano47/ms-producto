@@ -88,7 +88,7 @@ public class MaterialServiceImpl implements MaterialService{
 
 		Optional<Unidad> unidadMaterial = this.unidadRepo.findById(nuevo.getUnidad().getId());
 		
-		if(unidadMaterial.isPresent() && unidadMaterial.get().getDescripcion().equals(nuevo.getUnidad().getDescripcion())){
+		if(unidadMaterial.isPresent() && unidadMaterial.get().getId().equals(nuevo.getUnidad().getId())){
 
 			if(nuevo.getId() != null) {
 				Optional<Material> material = this.materialRepo.findById(nuevo.getId());
@@ -110,6 +110,7 @@ public class MaterialServiceImpl implements MaterialService{
 		Optional<Material> material = materialRepo.findById(id);
 
 		if(material.isPresent()) {
+			nuevo.setId(id);
 			this.materialRepo.save(nuevo);
 		}
 		else 

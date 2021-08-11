@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/producto")
 @Api(value = "MaterialController", description = "Permite gestionar los materiales de la empresa")
@@ -94,7 +95,7 @@ public class ProductoController {
 	@ApiOperation(value = "Da de alta un nuevo material")
 	public ResponseEntity<String> crear(@RequestBody Material material) {
 		
-		if(material.getUnidad() == null || material.getUnidad().getDescripcion() == null){
+		if(material.getUnidad() == null || material.getUnidad().getId() == null){
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Debe especificar la unidad del material");
 		}
