@@ -1,5 +1,6 @@
 package ms.producto.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ public class ProductoController {
 	@Autowired
 	MaterialService materialService;
 
+	@HystrixCommand(fallbackMethod = "materialVacio")
 	@GetMapping(path = "/{id}")
 	@ApiOperation(value = "Busca un material por id")
 	public ResponseEntity<Material> materialPorId(@PathVariable Integer id){
@@ -34,6 +37,7 @@ public class ProductoController {
 		return ResponseEntity.of(material);
 	}
 
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping(params = {"minPrecio", "maxPrecio"})
 	@ApiOperation(value = "Busca un material por rango de precio")
 	public ResponseEntity<?> materialPorPrecioEntre(@RequestParam Optional<Double> minPrecio, Optional<Double> maxPrecio){
@@ -56,6 +60,7 @@ public class ProductoController {
 		return ResponseEntity.ok(materiales);
 	}
 
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping(params = {"minStock", "maxStock"})
 	@ApiOperation(value = "Busca un material por rango de stock")
 	public ResponseEntity<?> materialPorStockEntre(@RequestParam Optional<Integer> minStock, Optional<Integer> maxStock){
@@ -78,6 +83,7 @@ public class ProductoController {
 		return ResponseEntity.ok(materiales);
 	}
 
+	@HystrixCommand(fallbackMethod = "materialVacio")
 	@GetMapping(params = "nombre")
 	@ApiOperation(value = "Busca un material por nombre")
 	public ResponseEntity<?> materialPorNombre(@RequestParam Optional<String> nombre){
@@ -90,7 +96,7 @@ public class ProductoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Debe ingresar un nombre");
 	}
 
-
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@PostMapping
 	@ApiOperation(value = "Da de alta un nuevo material")
 	public ResponseEntity<String> crear(@RequestBody Material material) {
@@ -116,6 +122,7 @@ public class ProductoController {
 		return ResponseEntity.ok("Material Creado");
 	}
 
+	@HystrixCommand(fallbackMethod = "materialVacio")
 	@PutMapping(path = "/{id}")
 	@ApiOperation(value = "Actualiza un material")
 	@ApiResponses(value = {
@@ -139,6 +146,7 @@ public class ProductoController {
 		return ResponseEntity.ok(nuevo);
 	}
 
+	@HystrixCommand(fallbackMethod = "errorServidor")
 	@DeleteMapping(path = "/{id}")
 	@ApiOperation(value = "Elimina un material")
 	@ApiResponses(value = {
@@ -158,11 +166,25 @@ public class ProductoController {
 		} 
 		return ResponseEntity.ok("Material "+id+" borrado con éxito");
 	}
-	
+
+	@HystrixCommand(fallbackMethod = "listaVacia")
 	@GetMapping
 	@ApiOperation(value = "Retorna lista de materiales")
 	public ResponseEntity<List<Material>> todos(){
 		List<Material> materiales = materialService.findAll();
 		return ResponseEntity.ok(materiales);
+	}
+
+	public ResponseEntity<Material> materialVacio(){
+		return ResponseEntity.ok(new Material());
+	}
+
+	public ResponseEntity<List<Material>> listVacia(){
+		List<Material> list= new ArrayList<>();
+		return ResponseEntity.ok(list);
+	}
+
+	public ResponseEntity<String> errorServidor(){
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Microservicio no disponible- Intentelo más tarde");
 	}
 }
